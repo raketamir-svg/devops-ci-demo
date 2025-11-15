@@ -1,0 +1,56 @@
+version: '3.9'
+
+services:
+  app1:
+    image: app1-image
+    container_name: app1-container
+    ports:
+      - "8083:80"
+    networks:
+      - my-network
+
+  app2:
+    image: app2-image
+    container_name: app2-container
+    ports:
+      - "8084:80"
+    networks:
+      - my-network
+
+  proxy:
+    image: proxy-image
+    container_name: proxy-container
+    ports:
+      - "8085:80"
+    networks:
+      - my-network
+
+  app3:
+    build: ./app3
+    container_name: app3-container
+    ports:
+      - "8086:80"
+    networks:
+      - my-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - my-network
+
+networks:
+   my-network:
+     external: true
+
+volumes:
+  mysql_data:

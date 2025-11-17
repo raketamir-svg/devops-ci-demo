@@ -1,0 +1,29 @@
+name: Continuous Deployment
+
+on:
+  push:
+    branches:
+      - main
+  # Запускаем CD только после успешного завершения CI (сборки образов)
+  workflow_run:
+    workflows: ["Build and Push Docker Images"]
+    types: 
+      - completed
+
+jobs:
+  deploy:
+    # Указываем наш локальный раннер, который мы запустили на VM
+    runs-on: self-hosted
+
+    # Этот шаг должен выполняться только если CI завершился успешно
+    if: success() 
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Deploy Script on Server
+        # Локальный раннер запускает скрипт прямо на VM
+        run: |
+          cd /home/devops/devops-mini-project/
+          ./deploy.sh

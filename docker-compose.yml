@@ -2,37 +2,51 @@ version: '3.9'
 
 services:
   app1:
-    image: app1-image
-    container_name: app1-container
-    ports:
-      - "8083:80"
+    image: olegxxx1/devops-mini-project-app1:latest
+    #container_name: app1-container
+    #ports:
+    #  - "8083:80"
     networks:
       - my-network
+    restart: always
 
   app2:
-    image: app2-image
-    container_name: app2-container
-    ports:
-      - "8084:80"
+    image: olegxxx1/devops-mini-project-app2:latest
+    #container_name: app2-container
+    #ports:
+    #  - "8084:80"
     networks:
       - my-network
+    restart: always
 
   proxy:
-    image: proxy-image
-    container_name: proxy-container
+    image: olegxxx1/devops-mini-project-proxy:latest
+    #container_name: proxy-container
+    build: ./proxy
     ports:
       - "8085:80"
     networks:
       - my-network
+    restart: always
+    # volumes:                         # <--- ДОБАВИТЬ ЭТО
+    # - ./proxy/nginx.conf:/etc/nginx/conf.d/balancer.conf  # Исправлен путь
 
   app3:
-    build: ./app3
-    container_name: app3-container
-    ports:
-      - "8086:80"
+    build: . # <--- ЗАМЕНА: Собираем образ из нашего Dockerfile в текущей папке
+    #ports:
+    #  - "8086:80"
     networks:
       - my-network
-
+    restart: always
+    command: ["python", "/app/app.py"] # <--- НОВАЯ СТРОКА! Явно
+    volumes:
+      - ./app-code:/app:ro # <--- ДОБАВЛЕНО: Монтируем исправленный код
+    environment:                 # <--- ДОБАВЛЕНО: Переменные для Python
+      DB_HOST: mysql
+          # Имя сервиса базы данных
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: mydb
   mysql:
     image: mysql:8.0
     container_name: mysql-container
@@ -43,14 +57,15 @@ services:
       MYSQL_PASSWORD: password
     volumes:
       - mysql_data:/var/lib/mysql
-    ports:
-      - "3306:3306"
+    #ports:
+    #  - "3306:3306"
     networks:
       - my-network
+    restart: always
 
 networks:
-   my-network:
-     external: true
+    my-network:
+      external: true
 
 volumes:
   mysql_data:

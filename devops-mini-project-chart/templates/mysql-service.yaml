@@ -1,0 +1,17 @@
+# mysql-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+  labels:
+    app: mysql
+spec:
+  selector:
+    app: mysql
+  ports:
+    - protocol: TCP
+      # Service Port: Жестко задан, так как это стандартный порт MySQL для ClusterIP Через него слушает Service
+      port: 3306 
+      # Target Port: Берется из values.yaml для гибкости
+      targetPort: {{ .Values.mysql.servicePort }}
+  type: ClusterIP

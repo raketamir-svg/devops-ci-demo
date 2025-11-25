@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: app3-service
+  labels:
+    app: app3
+spec:
+  # Этот Selector автоматически привяжет Service ко всем 3 Pod'ам App3
+  selector:
+    app: app3
+  ports:
+    - protocol: TCP
+      # Это порт жесткий по нему к app3 обращаются другие сервисы например nginx
+      port: 80
+      # этот порт может меняться Это порт контейнера посредством него Контейнер app3 слушает своего Пода
+      targetPort: {{ .Values.app3.servicePort }}
+  type: ClusterIP

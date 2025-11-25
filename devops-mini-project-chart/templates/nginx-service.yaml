@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+  labels:
+    app: proxy
+spec:
+  selector:
+    app: proxy
+  type: LoadBalancer # ИЗМЕНИЛИ НА LOADBALANCER
+  ports:
+    - protocol: TCP
+      port: 80         # Порт Service внутри кластера
+      targetPort:  {{ .Values.nginx.servicePort }}   # Порт Nginx-контейнера
+      nodePort: {{ .Values.nginx.nodePort }}

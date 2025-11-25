@@ -1,0 +1,37 @@
+# devops-mini-project-chart/templates/app3-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app3-deployment
+  labels:
+    app: app3
+spec:
+  # Берем количество реплик из values.yaml
+  replicas: {{ .Values.app3.replicaCount }} 
+  selector:
+    matchLabels:
+      app: app3
+  template:
+    metadata:
+      labels:
+        app: app3
+    spec:
+      containers:
+      - name: app3-container
+        # Берем имя образа из values.yaml
+        image: {{ .Values.app3.image }} 
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.app3.servicePort }} 
+        env:
+        # Переменные среды для подключения к БД
+        - name: DATABASE_HOST
+          # Имя K8s Service
+          value: {{ .Values.app3.db.host | quote }}
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-root-password # Имя Secret
+              key: mysql-root-password # Ключ Secret
+        - name: DB_USER
+          value: {{ .Values.app3.db.user | quote }}

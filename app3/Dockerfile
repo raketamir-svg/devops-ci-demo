@@ -1,12 +1,13 @@
-# Базовый образ с Python
+# ~/devops-mini-project/app3/Dockerfile
 FROM python:3.9-slim
-
-# Устанавливаем зависимости
-RUN pip install flask
-
-# Копируем код приложения
-COPY app.py /app/app.py
 WORKDIR /app
 
-# Запускаем Flask-сервер
+# Копируем и устанавливаем зависимости
+COPY requirements.txt .
+# Критический шаг: установка зависимостей
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Копируем сам код приложения
+COPY app.py .
+
 CMD ["python", "app.py"]

@@ -1,0 +1,12 @@
+# mysql-pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pv-claim
+spec:
+  accessModes:
+    - ReadWriteOnce # Том может быть подключен в режиме чтения/записи одним узлом
+  resources:
+    requests:
+      # !!! ИСПОЛЬЗУЕМ ПЕРЕМЕННУЮ ИЗ values.yaml !!!
+      storage: {{ .Values.mysql.storageSize | quote }}

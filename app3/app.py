@@ -7,9 +7,9 @@ app = Flask(__name__)
 
 # --- Конфигурация DB через переменные окружения (DevOps-стандарт) ---
 # DB_HOST будет именем сервиса MySQL в Docker Compose!
-DB_HOST = os.environ.get('DB_HOST', 'mysql-db')
+DB_HOST = os.environ.get('DATABASE_HOST', 'mysql-db')
 DB_USER = os.environ.get('DB_USER', 'root')
-DB_PASSWORD = os.environ.get('DB_PASSWORD', 'password')
+DB_PASSWORD = os.environ.get('DATABASE_PASSWORD', 'password')
 DB_NAME = os.environ.get('DB_NAME', 'testdb')
 
 @app.route('/')

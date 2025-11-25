@@ -1,9 +1,17 @@
 #!/bin/bash
 
-# --- 1. Подготовка и сборка (CI - Continuous Integration) ---
-echo "--- 1. Сборка нового образа App3..."
-# Собираем только измененный сервис App3, принудительно, чтобы использовать свежий код
-docker compose build app3
+# --- КОНФИГУРАЦИЯ ---
+# !!! ОБЯЗАТЕЛЬНО ЗАМЕНИТЕ "olegxxx1" НА ВАШ ЛОГИН DOCKER HUB !!!
+DOCKER_USER="olegxxx1" 
+IMAGE_NAME="${DOCKER_USER}/devops-mini-project-app3"
+CHART_PATH="./devops-mini-project-chart"
+RELEASE_NAME="my-project"
+TAG="latest" 
+
+echo "--- Шаг 1: Сборка нового Docker образа App3 ---"
+# Собираем Docker образ из папки app3, используя ее как контекст
+# Мы используем Dockerfile, который находится внутри папки app3
+docker build -t ${IMAGE_NAME}:${TAG} -f ./app3/Dockerfile ./app3
 
 # Проверяем успешность сборки
 if [ $? -ne 0 ]; then
@@ -11,25 +19,16 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# --- 2. Развертывание (CD - Continuous Deployment) ---
-echo "--- 2. Развертывание (Обновление сервиса с сохранением MySQL)..."
+echo "--- Шаг 2: Отправка образа в Docker Hub ---"
+docker push ${IMAGE_NAME}:${TAG}
 
-# Запуск только сервиса app3. Флаг --no-deps гарантирует,
-# что существующий mysql-контейнер не будет перезапускаться.
-# Флаг --force-recreate заставляет Docker Compose удалить старый app3-контейнер и запустить новый.
-docker compose up -d app3 --no-deps --force-recreate
+echo "--- Шаг 3: Обновление Helm Chart в Minikube ---"
+# Обновляем Helm Chart, явно передавая новый тег образа, 
+# чтобы Kubernetes выполнил Rollout (перезапуск Pod'ов с новым образом)
+helm upgrade ${RELEASE_NAME} ${CHART_PATH} \
+    --set app3.image="${IMAGE_NAME}:${TAG}"
 
-# Проверяем успешность развертывания
-if [ $? -ne 0 ]; then
-    echo "ОШИБКА: Развертывание App3 завершилось неудачно."
-    exit 1
-fi
+echo "--- Развертывание Helm завершено! Проверка статуса ---"
+kubectl get all | grep ${RELEASE_NAME}
 
-echo "--- 3. Обновление Nginx Load Balancer..."
-
-# Перезапускаем только прокси, чтобы Nginx гарантированно увидел новый app3-контейнер
-# (На самом деле Nginx видит его автоматически, но это хорошая практика для гарантии)
-docker compose up -d proxy --no-deps --force-recreate
-
-echo "--- 4. Автоматическое развертывание успешно завершено!"
-echo "Проверьте работу системы по адресу: http://192.168.56.4:8085"
+echo "--- Проверьте работу системы: curl http://$(minikube ip):30080 ---"

@@ -7,7 +7,7 @@ metadata:
     {{- include "devops-mini-project-chart.labels" . | nindent 4 }}
   annotations:
     # Используйте эти аннотации для Ingress Controller Nginx
-    nginx.ingress.kubernetes.io/rewrite-target: /1$
+    nginx.ingress.kubernetes.io/rewrite-target: /1$?
     kubernetes.io/ingress.class: "nginx"
 spec:
   rules:

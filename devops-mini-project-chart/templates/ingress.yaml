@@ -15,7 +15,7 @@ spec:
       paths:
       # Правило 1: App1. Путь теперь заканчивается на (.*)
       - path: /app1/(.*)
-        pathType: Prefix
+        pathType: ImplementationSpecific # <-- ИЗМЕНЕНИЕ
         backend:
           service:
             name: {{ include "devops-mini-project-chart.fullname" . }}-app1
@@ -23,7 +23,7 @@ spec:
               number: 80
       # Правило 2: App2. Путь теперь заканчивается на (.*)
       - path: /app2/(.*)
-        pathType: Prefix
+        pathType: ImplementationSpecific # <-- ИЗМЕНЕНИЕ
         backend:
           service:
             name: {{ include "devops-mini-project-chart.fullname" . }}-app2
@@ -31,7 +31,7 @@ spec:
               number: 80
       # Правило 3: App3 Путь теперь заканчивается на (.*)
       - path: /app3/(.*)
-        pathType: Prefix
+        pathType: ImplementationSpecific # <-- ИЗМЕНЕНИЕ
         backend:
           service:
             name: {{ include "devops-mini-project-chart.fullname" . }}-app3
@@ -39,7 +39,7 @@ spec:
               number: 80
       # Правило 4: Весь остальной трафик идет на Nginx Load Balancer
       - path: /
-        pathType: Prefix
+        pathType: Prefix # <-- Здесь Prefix можно оставить, так как нет (.*)
         backend:
           service:
             name: {{ include "devops-mini-project-chart.fullname" . }}-nginx

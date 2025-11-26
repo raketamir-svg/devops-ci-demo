@@ -35,3 +35,20 @@ spec:
               key: mysql-root-password # Ключ Secret
         - name: DB_USER
           value: {{ .Values.app3.db.user | quote }}
+        # --- ДОБАВЛЯЕМ ПРОВЕРКИ ЗДОРОВЬЯ ---
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          timeoutSeconds: 5
+
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+        # --------------------------------

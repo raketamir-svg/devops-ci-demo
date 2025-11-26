@@ -1,4 +1,5 @@
 # devops-mini-project-chart/templates/ingress.yaml
+
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -6,40 +7,43 @@ metadata:
   labels:
     {{- include "devops-mini-project-chart.labels" . | nindent 4 }}
   annotations:
-    # Используйте эти аннотации для Ingress Controller Nginx
-    nginx.ingress.kubernetes.io/rewrite-target: /1$?
-    kubernetes.io/ingress.class: "nginx"
+    # Используем REGEX для обработки пути
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    # ИСПРАВЛЕНИЕ: Используем стандартную аннотацию для вырезания префикса
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    # Указываем класс Ingress (для Minikube)
+    kubernetes.io/ingress.class: "nginx" 
 spec:
   rules:
   - http:
       paths:
-      # Правило 1: App1. Путь теперь заканчивается на (.*)
+      # Правило 1: App1. Используем RegEx в Path: /app1/(.*)
       - path: /app1/(.*)
-        pathType: ImplementationSpecific # <-- ИЗМЕНЕНИЕ
+        pathType: Prefix # <-- Вернули Prefix
         backend:
           service:
             name: {{ include "devops-mini-project-chart.fullname" . }}-app1
             port:
               number: 80
-      # Правило 2: App2. Путь теперь заканчивается на (.*)
+      # Правило 2: App2
       - path: /app2/(.*)
-        pathType: ImplementationSpecific # <-- ИЗМЕНЕНИЕ
+        pathType: Prefix # <-- Вернули Prefix
         backend:
           service:
             name: {{ include "devops-mini-project-chart.fullname" . }}-app2
             port:
               number: 80
-      # Правило 3: App3 Путь теперь заканчивается на (.*)
+      # Правило 3: App3
       - path: /app3/(.*)
-        pathType: ImplementationSpecific # <-- ИЗМЕНЕНИЕ
+        pathType: Prefix # <-- Вернули Prefix
         backend:
           service:
             name: {{ include "devops-mini-project-chart.fullname" . }}-app3
             port:
               number: 80
-      # Правило 4: Весь остальной трафик идет на Nginx Load Balancer
+      # Правило 4: Nginx (Root Path)
       - path: /
-        pathType: Prefix # <-- Здесь Prefix можно оставить, так как нет (.*)
+        pathType: Prefix
         backend:
           service:
             name: {{ include "devops-mini-project-chart.fullname" . }}-nginx

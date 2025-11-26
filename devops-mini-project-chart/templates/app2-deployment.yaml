@@ -19,3 +19,19 @@ spec:
         image: {{ .Values.app2.image }}
         ports:
         - containerPort: {{ .Values.app2.servicePort }}
+        
+        # --- ДОБАВЛЯЕМ ПРОВЕРКИ ЗДОРОВЬЯ ---
+        livenessProbe:
+          tcpSocket:
+            port: 80 # Проверка, что порт 80 открыт
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+
+        readinessProbe:
+          tcpSocket:
+            port: 80 # Проверка, что порт 80 открыт
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+        # --------------------------------

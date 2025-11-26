@@ -8,7 +8,7 @@ metadata:
     {{- include "devops-mini-project-chart.labels" . | nindent 4 }}
   annotations:
     # ИСПРАВЛЕНИЕ: Используем стандартную аннотацию для вырезания префикса
-    nginx.ingress.kubernetes.io/rewrite-target: /$1?
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   # ДОБАВЛЕНО: Явно указываем класс Ingress
   ingressClassName: nginx
@@ -16,24 +16,24 @@ spec:
   - http:
       paths:
       # Правило 1: App1. Используем ImplementationSpecific для обхода Webhook
-      - path: /app1/(.*)
-        pathType: ImplementationSpecific # <-- ИЗМЕНЕНИЕ
+      - path: /app1/
+        pathType: Prefix # <-- Переключаемся на Prefix, так как нет RegEx
         backend:
           service:
             name: {{ include "devops-mini-project-chart.fullname" . }}-app1
             port:
               number: 80
       # Правило 2: App2
-      - path: /app2/(.*)
-        pathType: ImplementationSpecific # <-- ИЗМЕНЕНИЕ
+      - path: /app2/
+        pathType: Prefix # <-- Переключаемся на Prefix, так как нет RegEx
         backend:
           service:
             name: {{ include "devops-mini-project-chart.fullname" . }}-app2
             port:
               number: 80
       # Правило 3: App3
-      - path: /app3/(.*)
-        pathType: ImplementationSpecific # <-- ИЗМЕНЕНИЕ
+      - path: /app3/
+        pathType: Prefix # <-- Переключаемся на Prefix, так как нет RegEx
         backend:
           service:
             name: {{ include "devops-mini-project-chart.fullname" . }}-app3

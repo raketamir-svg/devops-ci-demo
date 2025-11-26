@@ -7,19 +7,17 @@ metadata:
   labels:
     {{- include "devops-mini-project-chart.labels" . | nindent 4 }}
   annotations:
-    # Используем REGEX для обработки пути
-    nginx.ingress.kubernetes.io/use-regex: "true"
     # ИСПРАВЛЕНИЕ: Используем стандартную аннотацию для вырезания префикса
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/rewrite-target: /$1?
     # Указываем класс Ingress (для Minikube)
     kubernetes.io/ingress.class: "nginx" 
 spec:
   rules:
   - http:
       paths:
-      # Правило 1: App1. Используем RegEx в Path: /app1/(.*)
+      # Правило 1: App1. Используем ImplementationSpecific для обхода Webhook
       - path: /app1/(.*)
-        pathType: Prefix # <-- Вернули Prefix
+        pathType: ImplementationSpecific # <-- ИЗМЕНЕНИЕ
         backend:
           service:
             name: {{ include "devops-mini-project-chart.fullname" . }}-app1
@@ -27,7 +25,7 @@ spec:
               number: 80
       # Правило 2: App2
       - path: /app2/(.*)
-        pathType: Prefix # <-- Вернули Prefix
+        pathType: ImplementationSpecific # <-- ИЗМЕНЕНИЕ
         backend:
           service:
             name: {{ include "devops-mini-project-chart.fullname" . }}-app2
@@ -35,7 +33,7 @@ spec:
               number: 80
       # Правило 3: App3
       - path: /app3/(.*)
-        pathType: Prefix # <-- Вернули Prefix
+        pathType: ImplementationSpecific # <-- ИЗМЕНЕНИЕ
         backend:
           service:
             name: {{ include "devops-mini-project-chart.fullname" . }}-app3

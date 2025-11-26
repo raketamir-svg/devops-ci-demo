@@ -1,0 +1,47 @@
+# devops-mini-project-chart/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "devops-mini-project-chart.fullname" . }}-ingress
+  labels:
+    {{- include "devops-mini-project-chart.labels" . | nindent 4 }}
+  annotations:
+    # Используйте эти аннотации для Ingress Controller Nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+  - http:
+      paths:
+      # Правило 1: Трафик на /app1 перенаправляется на Service App1
+      - path: /app1
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ include "devops-mini-project-chart.fullname" . }}-app1
+            port:
+              number: 80
+      # Правило 2: Трафик на /app2 перенаправляется на Service App2
+      - path: /app2
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ include "devops-mini-project-chart.fullname" . }}-app2
+            port:
+              number: 80
+      # Правило 3: Трафик на /app3 перенаправляется на Service App3
+      - path: /app3
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ include "devops-mini-project-chart.fullname" . }}-app3
+            port:
+              number: 80
+      # Правило 4: Весь остальной трафик идет на Nginx Load Balancer
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ include "devops-mini-project-chart.fullname" . }}-nginx
+            port:
+              number: 80

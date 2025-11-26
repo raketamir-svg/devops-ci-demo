@@ -1,0 +1,56 @@
+# Пример Service для App1
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "devops-mini-project-chart.fullname" . }}-app1
+  # ... (метки)
+spec:
+  # ... (селектор)
+  ports:
+    - name: http # <--- ЭТОТ ПАРАМЕТР ДОБАВЛЕН
+      port: 80
+      targetPort: 80
+      protocol: TCP
+
+# Пример Service для App2
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "devops-mini-project-chart.fullname" . }}-app2
+  # ... (метки)
+spec:
+  # ... (селектор)
+  ports:
+    - name: http # <--- ЭТОТ ПАРАМЕТР ДОБАВЛЕН
+      port: 80
+      targetPort: 80
+      protocol: TCP
+
+# Пример Service для App3
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "devops-mini-project-chart.fullname" . }}-app3
+  # ... (метки)
+spec:
+  # ... (селектор)
+  ports:
+    - name: http # <--- ЭТОТ ПАРАМЕТР ДОБАВЛЕН
+      port: 80
+      targetPort: 80
+      protocol: TCP
+
+
+# Пример Service для Nginx
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "devops-mini-project-chart.fullname" . }}-nginx
+  # ... (метки)
+spec:
+  # ... (селектор)
+  ports:
+    - name: http # <--- ЭТОТ ПАРАМЕТР ДОБАВЛЕН
+      port: 80
+      targetPort: 80
+      protocol: TCP

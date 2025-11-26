@@ -9,9 +9,9 @@ metadata:
   annotations:
     # ИСПРАВЛЕНИЕ: Используем стандартную аннотацию для вырезания префикса
     nginx.ingress.kubernetes.io/rewrite-target: /$1?
-    # Указываем класс Ingress (для Minikube)
-    kubernetes.io/ingress.class: "nginx" 
 spec:
+  # ДОБАВЛЕНО: Явно указываем класс Ingress
+  ingressClassName: nginx
   rules:
   - http:
       paths:

@@ -3,13 +3,13 @@ import mysql.connector
 from flask import Flask
 from flask import jsonify
 
+app = Flask(__name__)
+
 # Новый эндпоинт для Liveness и Readiness Probes
 @app.route('/healthz')
 def health_check():
     return "OK", 200
 
-
-app = Flask(__name__)
 
 # --- Конфигурация DB через переменные окружения (DevOps-стандарт) ---
 # DB_HOST будет именем сервиса MySQL в Docker Compose!
